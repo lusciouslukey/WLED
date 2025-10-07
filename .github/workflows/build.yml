@@ -46,7 +46,15 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
-        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_dev_soundReactive_esp32dev.bin || true
+        echo "Looking for bin in: ${WLEDFOLDERNAME}/build_output/firmware/"
+        ls -lh ${WLEDFOLDERNAME}/build_output/firmware/ || echo "build_output/firmware not found"
+        if [ -f "${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin" ]; then
+          cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_dev_soundReactive_esp32dev.bin
+          echo "✓ Copied build_dev_soundReactive_esp32dev.bin ($(stat -c%s $GITHUB_WORKSPACE/build_dev_soundReactive_esp32dev.bin) bytes)"
+        else
+          echo "✗ custom_build.bin not found, trying alternative paths..."
+          find ${WLEDFOLDERNAME} -name "*.bin" -type f || echo "No bin files found"
+        fi
         date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
     - name: Commit Files dev soundReactive_esp32dev
       run: |
@@ -82,7 +90,15 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
-        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_dev_esp32_4MB_S.bin || true
+        echo "Looking for bin in: ${WLEDFOLDERNAME}/build_output/firmware/"
+        ls -lh ${WLEDFOLDERNAME}/build_output/firmware/ || echo "build_output/firmware not found"
+        if [ -f "${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin" ]; then
+          cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_dev_esp32_4MB_S.bin
+          echo "✓ Copied build_dev_esp32_4MB_S.bin ($(stat -c%s $GITHUB_WORKSPACE/build_dev_esp32_4MB_S.bin) bytes)"
+        else
+          echo "✗ custom_build.bin not found, trying alternative paths..."
+          find ${WLEDFOLDERNAME} -name "*.bin" -type f || echo "No bin files found"
+        fi
         date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
     - name: Commit Files dev esp32_4MB_S
       run: |
@@ -118,7 +134,15 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
-        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_master_soundReactive_esp32dev.bin || true
+        echo "Looking for bin in: ${WLEDFOLDERNAME}/build_output/firmware/"
+        ls -lh ${WLEDFOLDERNAME}/build_output/firmware/ || echo "build_output/firmware not found"
+        if [ -f "${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin" ]; then
+          cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_master_soundReactive_esp32dev.bin
+          echo "✓ Copied build_master_soundReactive_esp32dev.bin ($(stat -c%s $GITHUB_WORKSPACE/build_master_soundReactive_esp32dev.bin) bytes)"
+        else
+          echo "✗ custom_build.bin not found, trying alternative paths..."
+          find ${WLEDFOLDERNAME} -name "*.bin" -type f || echo "No bin files found"
+        fi
         date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
     - name: Commit Files master soundReactive_esp32dev
       run: |
@@ -154,7 +178,15 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
-        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_master_esp32_4MB_S.bin || true
+        echo "Looking for bin in: ${WLEDFOLDERNAME}/build_output/firmware/"
+        ls -lh ${WLEDFOLDERNAME}/build_output/firmware/ || echo "build_output/firmware not found"
+        if [ -f "${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin" ]; then
+          cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/build_master_esp32_4MB_S.bin
+          echo "✓ Copied build_master_esp32_4MB_S.bin ($(stat -c%s $GITHUB_WORKSPACE/build_master_esp32_4MB_S.bin) bytes)"
+        else
+          echo "✗ custom_build.bin not found, trying alternative paths..."
+          find ${WLEDFOLDERNAME} -name "*.bin" -type f || echo "No bin files found"
+        fi
         date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
     - name: Commit Files master esp32_4MB_S
       run: |
@@ -165,10 +197,21 @@ jobs:
         git add $GITHUB_WORKSPACE/last_update_date.txt || true
         git commit -m "Commit Custom Build" || true
         git push origin main || true
+    - name: List built files for debugging
+      run: |
+        echo "=== Files in GITHUB_WORKSPACE ==="
+        ls -lah $GITHUB_WORKSPACE/*.bin || echo "No bin files found in workspace"
+        echo "=== Checking if bins exist ==="
+        [ -f "$GITHUB_WORKSPACE/build_dev_soundReactive_esp32dev.bin" ] && echo "✓ build_dev_soundReactive_esp32dev.bin exists" || echo "✗ build_dev_soundReactive_esp32dev.bin missing"
+        [ -f "$GITHUB_WORKSPACE/build_dev_esp32_4MB_S.bin" ] && echo "✓ build_dev_esp32_4MB_S.bin exists" || echo "✗ build_dev_esp32_4MB_S.bin missing"
+        [ -f "$GITHUB_WORKSPACE/build_master_soundReactive_esp32dev.bin" ] && echo "✓ build_master_soundReactive_esp32dev.bin exists" || echo "✗ build_master_soundReactive_esp32dev.bin missing"
+        [ -f "$GITHUB_WORKSPACE/build_master_esp32_4MB_S.bin" ] && echo "✓ build_master_esp32_4MB_S.bin exists" || echo "✗ build_master_esp32_4MB_S.bin missing"
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: firmware-binaries
         path: |
-          ${{ github.workspace }}/*.bin
-          ${{ github.workspace }}/last_update_date.txt
+          build_*.bin
+          last_update_date.txt
+        if-no-files-found: warn
