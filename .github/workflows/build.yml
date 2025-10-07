@@ -22,6 +22,12 @@ jobs:
         pip install --upgrade platformio
         git rm -r $GITHUB_WORKSPACE/*.bin || true
     - name: Run PlatformIO dev soundReactive_esp32dev
+      env:
+        CLIENT_SSID: ${{ secrets.CLIENT_SSID }}
+        CLIENT_PASS: ${{ secrets.CLIENT_PASS }}
+        WLED_AP_SSID: ${{ secrets.WLED_AP_SSID }}
+        WLED_AP_PASS: ${{ secrets.WLED_AP_PASS }}
+        DEBUG_HOST: ${{ secrets.DEBUG_HOST }}
       run: |
         rm -rf /tmp/WLEDtemp/* || true
         mkdir -p /tmp/WLEDtemp
@@ -32,7 +38,7 @@ jobs:
         npm install
         echo '[env:custom_build]' >>platformio.ini
         echo 'extends = env:soundReactive_esp32dev' >>platformio.ini
-        echo 'build_flags = ${env:soundReactive_esp32dev.build_flags} ${common.debug_flags} -D SR_DEBUG -D LOLIN_WIFI_FIX -D WLED_DEBUG -D WLED_DEBUG_HOST='\''"10.20.30.100"'\'' -D WLED_DEBUG_IMPROV -D WLED_ENABLE_WEBSOCKETS -D BTNPIN=0 -D RLYPIN=2 -D RLYMDE=1 -D IRPIN=25 -D SR_DMTYPE=PDM_I2S -D I2S_SDPIN=32 -D I2S_WSPIN=15 -D I2S_CKPIN=-1 -D PIXEL_COUNTS=144 -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D CLIENT_SSID='\''"Chez-Bennett-IoT"'\'' -D CLIENT_PASS='\''"pO2tX2rFqHMDX2Wq/U7bCnUQ01RZa4KF"'\'' -D WLED_AP_SSID='\''"WLED"'\'' -D WLED_AP_PASS='\''"bollocks"'\'' -D WLED_WATCHDOG_TIMEOUT=300' >>platformio.ini
+        echo 'build_flags = ${env:soundReactive_esp32dev.build_flags} ${common.debug_flags} -D SR_DEBUG -D LOLIN_WIFI_FIX -D WLED_DEBUG -D WLED_DEBUG_HOST='\''"'"${DEBUG_HOST}"'"'\'' -D WLED_DEBUG_IMPROV -D WLED_ENABLE_WEBSOCKETS -D BTNPIN=0 -D RLYPIN=2 -D RLYMDE=1 -D IRPIN=25 -D SR_DMTYPE=PDM_I2S -D I2S_SDPIN=32 -D I2S_WSPIN=15 -D I2S_CKPIN=-1 -D PIXEL_COUNTS=144 -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D CLIENT_SSID='\''"'"${CLIENT_SSID}"'"'\'' -D CLIENT_PASS='\''"'"${CLIENT_PASS}"'"'\'' -D WLED_AP_SSID='\''"'"${WLED_AP_SSID}"'"'\'' -D WLED_AP_PASS='\''"'"${WLED_AP_PASS}"'"'\'' -D WLED_WATCHDOG_TIMEOUT=300' >>platformio.ini
         
         echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
         pio run -e custom_build || pio run -e custom_build || true
@@ -52,6 +58,12 @@ jobs:
         git commit -m "Commit Custom Build" || true
         git push origin main || true
     - name: Run PlatformIO dev esp32_4MB_S
+      env:
+        CLIENT_SSID: ${{ secrets.CLIENT_SSID }}
+        CLIENT_PASS: ${{ secrets.CLIENT_PASS }}
+        WLED_AP_SSID: ${{ secrets.WLED_AP_SSID }}
+        WLED_AP_PASS: ${{ secrets.WLED_AP_PASS }}
+        DEBUG_HOST: ${{ secrets.DEBUG_HOST }}
       run: |
         rm -rf /tmp/WLEDtemp/* || true
         mkdir -p /tmp/WLEDtemp
@@ -62,7 +74,7 @@ jobs:
         npm install
         echo '[env:custom_build]' >>platformio.ini
         echo 'extends = env:esp32_4MB_S' >>platformio.ini
-        echo 'build_flags = ${env:esp32_4MB_S.build_flags} ${common.debug_flags} -D SR_DEBUG -D LOLIN_WIFI_FIX -D WLED_DEBUG -D WLED_DEBUG_HOST='\''"10.20.30.100"'\'' -D WLED_DEBUG_IMPROV -D WLED_ENABLE_WEBSOCKETS -D BTNPIN=0 -D RLYPIN=2 -D RLYMDE=1 -D IRPIN=25 -D SR_DMTYPE=PDM_I2S -D I2S_SDPIN=32 -D I2S_WSPIN=15 -D I2S_CKPIN=-1 -D PIXEL_COUNTS=144 -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D CLIENT_SSID='\''"Chez-Bennett-IoT"'\'' -D CLIENT_PASS='\''"pO2tX2rFqHMDX2Wq/U7bCnUQ01RZa4KF"'\'' -D WLED_AP_SSID='\''"WLED"'\'' -D WLED_AP_PASS='\''"bollocks"'\'' -D WLED_WATCHDOG_TIMEOUT=300' >>platformio.ini
+        echo 'build_flags = ${env:esp32_4MB_S.build_flags} ${common.debug_flags} -D SR_DEBUG -D LOLIN_WIFI_FIX -D WLED_DEBUG -D WLED_DEBUG_HOST='\''"'"${DEBUG_HOST}"'"'\'' -D WLED_DEBUG_IMPROV -D WLED_ENABLE_WEBSOCKETS -D BTNPIN=0 -D RLYPIN=2 -D RLYMDE=1 -D IRPIN=25 -D SR_DMTYPE=PDM_I2S -D I2S_SDPIN=32 -D I2S_WSPIN=15 -D I2S_CKPIN=-1 -D PIXEL_COUNTS=144 -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D CLIENT_SSID='\''"'"${CLIENT_SSID}"'"'\'' -D CLIENT_PASS='\''"'"${CLIENT_PASS}"'"'\'' -D WLED_AP_SSID='\''"'"${WLED_AP_SSID}"'"'\'' -D WLED_AP_PASS='\''"'"${WLED_AP_PASS}"'"'\'' -D WLED_WATCHDOG_TIMEOUT=300' >>platformio.ini
         
         echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
         pio run -e custom_build || pio run -e custom_build || true
@@ -82,6 +94,12 @@ jobs:
         git commit -m "Commit Custom Build" || true
         git push origin main || true
     - name: Run PlatformIO master soundReactive_esp32dev
+      env:
+        CLIENT_SSID: ${{ secrets.CLIENT_SSID }}
+        CLIENT_PASS: ${{ secrets.CLIENT_PASS }}
+        WLED_AP_SSID: ${{ secrets.WLED_AP_SSID }}
+        WLED_AP_PASS: ${{ secrets.WLED_AP_PASS }}
+        DEBUG_HOST: ${{ secrets.DEBUG_HOST }}
       run: |
         rm -rf /tmp/WLEDtemp/* || true
         mkdir -p /tmp/WLEDtemp
@@ -92,7 +110,7 @@ jobs:
         npm install
         echo '[env:custom_build]' >>platformio.ini
         echo 'extends = env:soundReactive_esp32dev' >>platformio.ini
-        echo 'build_flags = ${env:soundReactive_esp32dev.build_flags} ${common.debug_flags} -D SR_DEBUG -D LOLIN_WIFI_FIX -D WLED_DEBUG -D WLED_DEBUG_HOST='\''"10.20.30.100"'\'' -D WLED_DEBUG_IMPROV -D WLED_ENABLE_WEBSOCKETS -D BTNPIN=0 -D RLYPIN=2 -D RLYMDE=1 -D IRPIN=25 -D SR_DMTYPE=PDM_I2S -D I2S_SDPIN=32 -D I2S_WSPIN=15 -D I2S_CKPIN=-1 -D PIXEL_COUNTS=144 -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D CLIENT_SSID='\''"Chez-Bennett-IoT"'\'' -D CLIENT_PASS='\''"pO2tX2rFqHMDX2Wq/U7bCnUQ01RZa4KF"'\'' -D WLED_AP_SSID='\''"WLED"'\'' -D WLED_AP_PASS='\''"bollocks"'\'' -D WLED_WATCHDOG_TIMEOUT=300' >>platformio.ini
+        echo 'build_flags = ${env:soundReactive_esp32dev.build_flags} ${common.debug_flags} -D SR_DEBUG -D LOLIN_WIFI_FIX -D WLED_DEBUG -D WLED_DEBUG_HOST='\''"'"${DEBUG_HOST}"'"'\'' -D WLED_DEBUG_IMPROV -D WLED_ENABLE_WEBSOCKETS -D BTNPIN=0 -D RLYPIN=2 -D RLYMDE=1 -D IRPIN=25 -D SR_DMTYPE=PDM_I2S -D I2S_SDPIN=32 -D I2S_WSPIN=15 -D I2S_CKPIN=-1 -D PIXEL_COUNTS=144 -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D CLIENT_SSID='\''"'"${CLIENT_SSID}"'"'\'' -D CLIENT_PASS='\''"'"${CLIENT_PASS}"'"'\'' -D WLED_AP_SSID='\''"'"${WLED_AP_SSID}"'"'\'' -D WLED_AP_PASS='\''"'"${WLED_AP_PASS}"'"'\'' -D WLED_WATCHDOG_TIMEOUT=300' >>platformio.ini
         
         echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
         pio run -e custom_build || pio run -e custom_build || true
@@ -112,6 +130,12 @@ jobs:
         git commit -m "Commit Custom Build" || true
         git push origin main || true
     - name: Run PlatformIO master esp32_4MB_S
+      env:
+        CLIENT_SSID: ${{ secrets.CLIENT_SSID }}
+        CLIENT_PASS: ${{ secrets.CLIENT_PASS }}
+        WLED_AP_SSID: ${{ secrets.WLED_AP_SSID }}
+        WLED_AP_PASS: ${{ secrets.WLED_AP_PASS }}
+        DEBUG_HOST: ${{ secrets.DEBUG_HOST }}
       run: |
         rm -rf /tmp/WLEDtemp/* || true
         mkdir -p /tmp/WLEDtemp
@@ -122,7 +146,7 @@ jobs:
         npm install
         echo '[env:custom_build]' >>platformio.ini
         echo 'extends = env:esp32_4MB_S' >>platformio.ini
-        echo 'build_flags = ${env:esp32_4MB_S.build_flags} ${common.debug_flags} -D SR_DEBUG -D LOLIN_WIFI_FIX -D WLED_DEBUG -D WLED_DEBUG_HOST='\''"10.20.30.100"'\'' -D WLED_DEBUG_IMPROV -D WLED_ENABLE_WEBSOCKETS -D BTNPIN=0 -D RLYPIN=2 -D RLYMDE=1 -D IRPIN=25 -D SR_DMTYPE=PDM_I2S -D I2S_SDPIN=32 -D I2S_WSPIN=15 -D I2S_CKPIN=-1 -D PIXEL_COUNTS=144 -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D CLIENT_SSID='\''"Chez-Bennett-IoT"'\'' -D CLIENT_PASS='\''"pO2tX2rFqHMDX2Wq/U7bCnUQ01RZa4KF"'\'' -D WLED_AP_SSID='\''"WLED"'\'' -D WLED_AP_PASS='\''"bollocks"'\'' -D WLED_WATCHDOG_TIMEOUT=300' >>platformio.ini
+        echo 'build_flags = ${env:esp32_4MB_S.build_flags} ${common.debug_flags} -D SR_DEBUG -D LOLIN_WIFI_FIX -D WLED_DEBUG -D WLED_DEBUG_HOST='\''"'"${DEBUG_HOST}"'"'\'' -D WLED_DEBUG_IMPROV -D WLED_ENABLE_WEBSOCKETS -D BTNPIN=0 -D RLYPIN=2 -D RLYMDE=1 -D IRPIN=25 -D SR_DMTYPE=PDM_I2S -D I2S_SDPIN=32 -D I2S_WSPIN=15 -D I2S_CKPIN=-1 -D PIXEL_COUNTS=144 -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D CLIENT_SSID='\''"'"${CLIENT_SSID}"'"'\'' -D CLIENT_PASS='\''"'"${CLIENT_PASS}"'"'\'' -D WLED_AP_SSID='\''"'"${WLED_AP_SSID}"'"'\'' -D WLED_AP_PASS='\''"'"${WLED_AP_PASS}"'"'\'' -D WLED_WATCHDOG_TIMEOUT=300' >>platformio.ini
         
         echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
         pio run -e custom_build || pio run -e custom_build || true

@@ -1,0 +1,8 @@
+Workflow Configuration Summary
+================================
+
+Your workflow builds 4 bin files:
+1. build_dev_soundReactive_esp32dev.bin
+2. build_dev_esp32_4MB_S.bin
+3. build_master_soundReactive_esp32dev.bin
+4. build_master_esp32_4MB_S.bin
