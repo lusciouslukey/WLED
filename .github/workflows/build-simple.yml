@@ -28,27 +28,40 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install --upgrade platformio
-        
+
     - name: Install npm dependencies
       run: npm ci
       
     - name: Build web UI
       run: npm run build
       
-    - name: Build firmware for esp32dev
+    - name: Configure custom build environment
+      env:
+        CLIENT_SSID: ${{ secrets.CLIENT_SSID }}
+        CLIENT_PASS: ${{ secrets.CLIENT_PASS }}
+        WLED_AP_SSID: ${{ secrets.WLED_AP_SSID }}
+        WLED_AP_PASS: ${{ secrets.WLED_AP_PASS }}
+        DEBUG_HOST: ${{ secrets.DEBUG_HOST }}
       run: |
-        pio run -e esp32dev
+        echo '[env:custom_build]' >>platformio.ini
+        echo 'extends = env:soundReactive_esp32dev' >>platformio.ini
+        echo 'build_flags = ${env:soundReactive_esp32dev.build_flags} ${common.debug_flags} -D SR_DEBUG -D WLED_DEBUG -D WLED_DEBUG_HOST='\''"'"${DEBUG_HOST}"'"'\'' -D WLED_DEBUG_IMPROV -D WLED_ENABLE_WEBSOCKETS -D BTNPIN=0 -D RLYPIN=2 -D RLYMDE=1 -D IRPIN=25 -D SR_DMTYPE=PDM_I2S -D I2S_SDPIN=32 -D I2S_WSPIN=15 -D I2S_CKPIN=-1 -D PIXEL_COUNTS=144 -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D CLIENT_SSID='\''"'"${CLIENT_SSID}"'"'\'' -D CLIENT_PASS='\''"'"${CLIENT_PASS}"'"'\'' -D WLED_AP_SSID='\''"'"${WLED_AP_SSID}"'"'\'' -D WLED_AP_PASS='\''"'"${WLED_AP_PASS}"'"'\'' -D WLED_WATCHDOG_TIMEOUT=300' >>platformio.ini
+        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
+      
+    - name: Build firmware for custom_build
+      run: |
+        pio run -e custom_build
         
     - name: List build output
       run: |
         echo "=== Looking for bin files ==="
         find .pio/build -name "*.bin" -type f
-        ls -lh .pio/build/esp32dev/*.bin || echo "No bins in .pio/build/esp32dev"
+        ls -lh .pio/build/custom_build/*.bin || echo "No bins in .pio/build/custom_build"
         
     - name: Copy binaries
       run: |
         mkdir -p firmware
-        cp .pio/build/esp32dev/firmware.bin firmware/wled_esp32dev.bin || echo "Failed to copy firmware.bin"
+        cp .pio/build/custom_build/firmware.bin firmware/wled_custom_build.bin || echo "Failed to copy firmware.bin"
         ls -lh firmware/
         
     - name: Upload firmware artifacts
