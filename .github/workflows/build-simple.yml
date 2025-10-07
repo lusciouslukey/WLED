@@ -1,0 +1,59 @@
+name: Simple Local Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.9
+        
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+        
+    - name: Install npm dependencies
+      run: npm ci
+      
+    - name: Build web UI
+      run: npm run build
+      
+    - name: Build firmware for esp32dev
+      run: |
+        pio run -e esp32dev
+        
+    - name: List build output
+      run: |
+        echo "=== Looking for bin files ==="
+        find .pio/build -name "*.bin" -type f
+        ls -lh .pio/build/esp32dev/*.bin || echo "No bins in .pio/build/esp32dev"
+        
+    - name: Copy binaries
+      run: |
+        mkdir -p firmware
+        cp .pio/build/esp32dev/firmware.bin firmware/wled_esp32dev.bin || echo "Failed to copy firmware.bin"
+        ls -lh firmware/
+        
+    - name: Upload firmware artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: firmware-binaries
+        path: firmware/*.bin
+        if-no-files-found: error
